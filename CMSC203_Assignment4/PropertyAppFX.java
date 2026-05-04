@@ -2,120 +2,126 @@
  * Instructor: Dr. Grinberg
  * Due: 3/30/2026
  * Platform/compiler: Java
+ * Description: The program lets the user add properties, view a list of all properties, and calculate the total rent collected from all properties.
  * I pledge that I have completed the programming assignment independently.
- * I have not copied the code from a student or any source. I have not given
- * my code to any student.
+ * I have not copied the code from a student or any source. I have not given my code to any student.
  * Ishatta King
  */
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+// Used Oracle to relearn JavaFX
+// Link: https://docs.oracle.com/javafx/2/get_started/jfxpub-get_started.htm
 public class PropertyAppFX extends Application {
-    private ManagementCompany mc = new ManagementCompany("Moco Company", "123-456-7890");
 
-    private TextField propertyNameField;
-    private TextField cityField;
-    private TextField rentField;
-    private TextField ownerField;
-    private TextArea outputArea;
+    private ManagementCompany company = new ManagementCompany("Six-Seven BrainRot", "167-67-4167");
+
+    private TextField nameInput = new TextField();
+    private TextField cityInput = new TextField();
+    private TextField rentInput = new TextField();
+    private TextField ownerInput = new TextField();
+    private TextArea displayArea = new TextArea();
 
     @Override
-    public void start(Stage primaryStage) {
-        Label propertyNameLabel = new Label("Property Name:");
-        Label cityLabel = new Label("City:");
-        Label rentLabel = new Label("Rent Amount:");
-        Label ownerLabel = new Label("Owner:");
+    public void start(Stage stage) {
+        Label title = new Label("Property Management Application");
 
-        propertyNameField = new TextField();
-        cityField = new TextField();
-        rentField = new TextField();
-        ownerField = new TextField();
+        GridPane form = createForm();
 
         Button addButton = new Button("Add Property");
-        Button showButton = new Button("Show Properties");
-        Button totalButton = new Button("Show Total Rent");
+        Button showButton = new Button("Show All Properties");
+        Button rentButton = new Button("Calculate Total Rent");
         Button clearButton = new Button("Clear");
 
-        outputArea = new TextArea();
-        outputArea.setEditable(false);
-        outputArea.setPrefHeight(220);
-
         addButton.setOnAction(e -> addProperty());
-        showButton.setOnAction(e -> outputArea.setText(mc.toString()));
-        totalButton.setOnAction(e -> outputArea.setText("Total Rent: $" + mc.totalRent()));
-        clearButton.setOnAction(e -> clearFields());
+        showButton.setOnAction(e -> displayArea.setText(company.toString()));
+        rentButton.setOnAction(e -> displayArea.setText("Total Rent: $" + company.totalRent()));
+        clearButton.setOnAction(e -> clearInputs());
 
-        GridPane grid = new GridPane();
-        grid.setPadding(new Insets(10));
-        grid.setHgap(10);
-        grid.setVgap(10);
+        HBox buttonRow = new HBox(10, addButton, showButton, rentButton, clearButton);
 
-        grid.add(propertyNameLabel, 0, 0);
-        grid.add(propertyNameField, 1, 0);
+        displayArea.setEditable(false);
+        displayArea.setPrefHeight(200);
 
-        grid.add(cityLabel, 0, 1);
-        grid.add(cityField, 1, 1);
+        VBox topSection = new VBox(10, title, form, buttonRow);
+        topSection.setPadding(new Insets(10));
 
-        grid.add(rentLabel, 0, 2);
-        grid.add(rentField, 1, 2);
-
-        grid.add(ownerLabel, 0, 3);
-        grid.add(ownerField, 1, 3);
-
-        HBox buttons = new HBox(10, addButton, showButton, totalButton, clearButton);
-        VBox root = new VBox(10, grid, buttons, outputArea);
+        BorderPane root = new BorderPane();
+        root.setTop(topSection);
+        root.setCenter(displayArea);
         root.setPadding(new Insets(10));
 
-        Scene scene = new Scene(root, 650, 400);
-        primaryStage.setTitle("Property Management Application");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        Scene scene = new Scene(root, 600, 400);
+        stage.setTitle("Property App");
+        stage.setScene(scene);
+        stage.show();
     }
 
+    // Creates the input form
+    private GridPane createForm() {
+        GridPane form = new GridPane();
+
+        form.setHgap(10);
+        form.setVgap(10);
+
+        form.add(new Label("Name:"), 0, 0);
+        form.add(nameInput, 1, 0);
+
+        form.add(new Label("City:"), 0, 1);
+        form.add(cityInput, 1, 1);
+
+        form.add(new Label("Rent:"), 0, 2);
+        form.add(rentInput, 1, 2);
+
+        form.add(new Label("Owner:"), 0, 3);
+        form.add(ownerInput, 1, 3);
+
+        return form;
+    }
+
+    // Adds a property from the input fields
     private void addProperty() {
-        String propertyName = propertyNameField.getText().trim();
-        String city = cityField.getText().trim();
-        String rentText = rentField.getText().trim();
-        String owner = ownerField.getText().trim();
-
-        if (propertyName.isEmpty() || city.isEmpty() || rentText.isEmpty() || owner.isEmpty()) {
-            outputArea.setText("Error: All fields are required.");
+        if (nameInput.getText().isEmpty() || cityInput.getText().isEmpty()
+                || rentInput.getText().isEmpty() || ownerInput.getText().isEmpty()) {
+            displayArea.setText("Please fill in all fields.");
             return;
         }
 
-        double rent;
+        // Learned from Chapter 11 of textbook
         try {
-            rent = Double.parseDouble(rentText);
+            double rent = Double.parseDouble(rentInput.getText());
+
+            Property property = new Property(
+                    nameInput.getText(),
+                    cityInput.getText(),
+                    rent,
+                    ownerInput.getText()
+            );
+
+            int index = company.addProperty(property);
+
+            if (index == -1) {
+                displayArea.setText("The property list is full.");
+            } else {
+                displayArea.setText("Property added.");
+                clearInputs();
+            }
+
         } catch (NumberFormatException e) {
-            outputArea.setText("Error: Rent must be a valid number.");
-            return;
-        }
-
-        Property p = new Property(propertyName, city, rent, owner);
-        int result = mc.addProperty(p);
-
-        if (result == -1) {
-            outputArea.setText("Error: Property list is full.");
-        } else {
-            outputArea.setText("Property added successfully at index " + result + ".");
-            clearFields();
+            displayArea.setText("Rent must be a number.");
         }
     }
 
-    private void clearFields() {
-        propertyNameField.clear();
-        cityField.clear();
-        rentField.clear();
-        ownerField.clear();
+    // Clears the input fields
+    private void clearInputs() {
+        nameInput.clear();
+        cityInput.clear();
+        rentInput.clear();
+        ownerInput.clear();
     }
 
     public static void main(String[] args) {
