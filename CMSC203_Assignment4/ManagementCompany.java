@@ -2,12 +2,13 @@
  * Instructor: Dr. Grinberg
  * Due: 3/30/2026
  * Platform/compiler: Java
+ * Description: The program lets the user add properties, view a list of all properties, and calculate the total rent collected from all properties.
  * I pledge that I have completed the programming assignment independently.
- * I have not copied the code from a student or any source. I have not given
- * my code to any student.
+ * I have not copied the code from a student or any source. I have not given my code to any student.
  * Ishatta King
  */
 public class ManagementCompany {
+	
     public static final int MAX_PROPERTIES = 5;
 
     private String name;
@@ -15,10 +16,7 @@ public class ManagementCompany {
     private Property[] properties;
     private int propertyCount;
 
-    /**Parameterized constructor
-     * @param name company name
-     * @param taxId company tax ID
-     */
+    // Parameterized Constructor
     public ManagementCompany(String name, String taxId) {
         this.name = name;
         this.taxId = taxId;
@@ -26,20 +24,46 @@ public class ManagementCompany {
         this.propertyCount = 0;
     }
 
-    /**Copy constructor
-     * @param other the management company to copy
-     */
+    // Copy Constructor
     public ManagementCompany(ManagementCompany other) {
-        this.name = other.name;
-        this.taxId = other.taxId;
-        this.properties = new Property[MAX_PROPERTIES];
-        this.propertyCount = other.propertyCount;
+    	// Learned from Page 8-31 in chapter 8 slides
+        this(other.name, other.taxId);
 
         for (int i = 0; i < other.propertyCount; i++) {
-            this.properties[i] = new Property(other.properties[i]);
+            properties[i] = new Property(other.properties[i]);
         }
+
+        propertyCount = other.propertyCount;
     }
 
+    //Adds a property and returns its index, or -1 if full
+    public int addProperty(Property property) {
+        if (property == null) {
+            return -1;
+        }
+
+        if (propertyCount >= MAX_PROPERTIES) {
+            return -1;
+        }
+
+        properties[propertyCount] = new Property(property);
+        propertyCount++;
+
+        return propertyCount - 1;
+    }
+
+    // Calculates and returns the total rent of all properties
+    public double totalRent() {
+        double total = 0;
+
+        for (int i = 0; i < propertyCount; i++) {
+            total += properties[i].getRentAmount();
+        }
+
+        return total;
+    }
+    
+    // Getter methods
     public String getName() {
         return name;
     }
@@ -51,60 +75,26 @@ public class ManagementCompany {
     public int getPropertyCount() {
         return propertyCount;
     }
-
-    /**Return the property at the given index
-     * @param index index in the array
-     * @return property at index, or null if invalid
-     */
+    
+    // Returns the property at the given index or null if invalid
     public Property getProperty(int index) {
         if (index < 0 || index >= propertyCount) {
             return null;
         }
+
         return properties[index];
     }
 
-    /**Adds a copy of the property to the array
-     * @param p property to add
-     * @return index where property was added, or -1 if full
-     */
-    public int addProperty(Property p) {
-        if (propertyCount >= MAX_PROPERTIES) {
-            return -1;
-        }
-
-        properties[propertyCount] = new Property(p);
-        propertyCount++;
-        return propertyCount - 1;
-    }
-
-    /**Calculates the total rent of all stored properties
-     * @return total rent
-     */
-    public double totalRent() {
-        double total = 0.0;
-
-        for (int i = 0; i < propertyCount; i++) {
-            total += properties[i].getRentAmount();
-        }
-
-        return total;
-    }
-
-    /**Return s a formatted summary of the company and all properties
-     * @return formatted company information
-     */
-    @Override
     public String toString() {
-        String result = "Management Company: " + name
-                + "\nTax ID: " + taxId
-                + "\n-------------------------\n";
+        String result = "Management Company: " + name + "\nID: " + taxId + "\nProperties:\n";
 
-        for (int i = 0; i < propertyCount; i++) {
-            result += properties[i].toString() + "\n";
+        for (Property props : properties) {
+        	if(props != null) {
+        		result += props + "\n";
+        	}
         }
 
-        result += "-------------------------\n";
-        result += "Total Rent: $" + totalRent();
+        result += "Total Rent: $" +  totalRent();
 
         return result;
     }
