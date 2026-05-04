@@ -3,31 +3,24 @@
  * Due: 3/30/2026
  * Platform/compiler: Java
  * I pledge that I have completed the programming assignment independently.
- * I have not copied the code from a student or any source. I have not given
- * my code to any student.
+ * I have not copied the code from a student or any source. I have not given my code to any student.
  * Ishatta King
  */
-
 public class Property {
     private String propertyName;
     private String city;
     private double rentAmount;
     private String owner;
 
-    //Default constructor
+    // Default Constructor
     public Property() {
-        this.propertyName = "";
-        this.city = "";
-        this.rentAmount = 0.0;
-        this.owner = "";
+        propertyName = "";
+        city = "";
+        rentAmount = 0;
+        owner = "";
     }
 
-    /**Parameterized constructor
-     * @param propertyName property name
-     * @param city city name
-     * @param rentAmount monthly rent
-     * @param owner owner name
-     */
+    // Parameterized Constructor
     public Property(String propertyName, String city, double rentAmount, String owner) {
         this.propertyName = propertyName;
         this.city = city;
@@ -35,56 +28,48 @@ public class Property {
         this.owner = owner;
     }
 
-    /**Copy constructor
-     * @param other the property to copy
-     */
+    // Copy Constructor
     public Property(Property other) {
-        this.propertyName = other.propertyName;
-        this.city = other.city;
-        this.rentAmount = other.rentAmount;
-        this.owner = other.owner;
+        this(other.propertyName, other.city,other.rentAmount,other.owner);
     }
 
+    // Getter methods
     public String getPropertyName() {
         return propertyName;
-    }
-
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
     }
 
     public String getCity() {
         return city;
     }
 
-    public void setCity(String city) {
-        this.city = city;
-    }
-
     public double getRentAmount() {
         return rentAmount;
-    }
-
-    public void setRentAmount(double rentAmount) {
-        this.rentAmount = rentAmount;
     }
 
     public String getOwner() {
         return owner;
     }
 
+    // Setter methods
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public void setRentAmount(double rentAmount) {
+        this.rentAmount = rentAmount;
+    }
+
     public void setOwner(String owner) {
         this.owner = owner;
     }
 
-    /**Returns the property information as a formatted string
-     * @return property details
-     */
+    // toString
     @Override
     public String toString() {
-        return "Property Name: " + propertyName
-                + ", City: " + city
-                + ", Rent Amount: $" + rentAmount
-                + ", Owner: " + owner;
+        return "Property Name: " + propertyName + ", City: " + city + ", Owner: " + owner + ", Rent: $" + rentAmount;
     }
 }
